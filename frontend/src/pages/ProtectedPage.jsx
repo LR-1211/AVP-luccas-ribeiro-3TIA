@@ -9,22 +9,47 @@ export default function ProtectedPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  function loadProfile() {
+ async function loadProfile() {
     // TODO: pegar o token salvo no localStorage usando getToken.
+    const token = getToken();
     // TODO: se não existir token, redirecionar para /login.
+    if(!token){
+      navigate("/login")
+      return
+    }
+    try{
     // TODO: ativar loading.
+    setLoading(true);
     // TODO: chamar GET /users/profile usando api.get.
-    // TODO: enviar o token no header Authorization no formato Bearer TOKEN.
+    const resposta = await api.get("/users/profile",{
+      headers:{
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    setUser(resposta.data.user);
     // TODO: salvar os dados do usuário no estado user.
+    }catch{
     // TODO: se o token for inválido, remover token e redirecionar para /login.
     // TODO: mostrar mensagem de erro se acontecer algum problema.
+
+    const message = error.response?.data?.message || "Sessão invalida. Faça login novamente.";
+
+    setError(message);
+
+    navigate("/login");
+    }finally{ 
     // TODO: desativar loading no final.
     // Dica: api.get("/users/profile", { headers: { Authorization: `Bearer ${token}` } })
+    setLoading(false);
+    }
   }
 
   function handleLogout() {
     // TODO: remover o token usando removeToken.
+    removeToken();
     // TODO: redirecionar para /login.
+    navigate("/login");
   }
 
   useEffect(() => {

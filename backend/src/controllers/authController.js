@@ -125,9 +125,6 @@ export async function login(req, res) {
       }
     });
 
-    return res.status(501).json({
-      message: "Login ainda será implementado pelos alunos"
-    });
   } catch (error) {
     console.error("Erro no login:", error);
     return res.status(500).json({ message: "Erro interno do servidor" });
